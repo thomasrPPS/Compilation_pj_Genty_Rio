@@ -46,7 +46,7 @@ IDF             {LETTRE}({LETTRE}|{CHIFFRE}|'_')*
 CHAINE_CAR      [\x20-\x22]|[\x23-\x5B]|[\x5D-\x7E] 
 /* On exclue les caractères non voulus */
 CHAINE          \"({CHAINE_CAR}|\\\"|\\n)*\"
-COMMENTAIRE     C
+COMMENTAIRE     \/\/({CHAINE_CAR})*(\\n)*
 SEPARATEUR      [ \t\n]+
 
 %%
@@ -67,29 +67,29 @@ SEPARATEUR      [ \t\n]+
 "-"             RETURN(TOK_MINUS);
 "*"             RETURN(TOK_MUL);
 "/"             RETURN(TOK_DIV);
-'%'             RETURN(TOK_MOD);
-'>'             RETURN(TOK_GT);
-'<'             RETURN(TOK_LT);
-'!'             RETURN(TOK_NOT);
-'~'             RETURN(TOK_BNOT);
-'&'             RETURN(TOK_BAND);
+"%"             RETURN(TOK_MOD);
+">"             RETURN(TOK_GT);
+"<"             RETURN(TOK_LT);
+"!"             RETURN(TOK_NOT);
+"~"             RETURN(TOK_BNOT);
+"&"             RETURN(TOK_BAND);
 "|"             RETURN(TOK_BOR);
-'^'             RETURN(TOK_BXOR);
-'='             RETURN(TOK_AFFECT);
-';'             RETURN(TOK_SEMICOL);
-','             RETURN(TOK_COMMA);
+"^"             RETURN(TOK_BXOR);
+"="             RETURN(TOK_AFFECT);
+";"             RETURN(TOK_SEMICOL);
+","             RETURN(TOK_COMMA);
 "("             RETURN(TOK_LPAR);
 ")"             RETURN(TOK_RPAR);
 "{"             RETURN(TOK_LACC);
 "}"             RETURN(TOK_RACC);
-'>>'            RETURN(TOK_SLL);
-'>>>'           RETURN(TOK_SRL);
-'<<'            RETURN(TOK_SRA);
-'>='            RETURN(TOK_GE);
-'<='            RETURN(TOK_LE);
-'=='            RETURN(TOK_EQ);
-'!='            RETURN(TOK_NE);
-'&&'            RETURN(TOK_AND);
+">>"            RETURN(TOK_SLL);
+">>>"           RETURN(TOK_SRL);
+"<<"            RETURN(TOK_SRA);
+">="            RETURN(TOK_GE);
+"<="            RETURN(TOK_LE);
+"=="            RETURN(TOK_EQ);
+"!="            RETURN(TOK_NE);
+"&&"            RETURN(TOK_AND);
 "||"            RETURN(TOK_OR);
 
 

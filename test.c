@@ -9,3 +9,9 @@ int
 0x3F
 "oui"
 )
+// commentaire
+"string"
+/
+))
+27
+int i = 4;
