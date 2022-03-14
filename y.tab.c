@@ -1836,9 +1836,25 @@ yyreturn:
 /* A completer et/ou remplacer avec d'autres fonctions */
 node_t make_node(node_nature nature, int nops, ...) {
     va_list ap;
+    node_t node;
+    node->nops = nops;
+    node->lineno = yylineno;
+    node->nature = nature;
 
-    return NULL;
+    va_start(ap, nops);
+
+    node->opr = (node_t *) malloc(nops*sizeof(node_t));
+
+    for(int i=0;i<nops;i++){
+        node->opr[i] = va_arg(ap, node_t);
+    }
+    
+
+    va_end(ap);
+    return node;
 }
+
+//node_t make_node_ident(char* identifier, node_type type, bool global_decl, node_t* decl_node)
 
 
 void analyse_tree(node_t root) {
