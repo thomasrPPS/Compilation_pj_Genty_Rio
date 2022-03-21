@@ -101,11 +101,12 @@ node_t make_node_ident(char* identifier);
 node_t make_node_type(node_type type);
 node_t make_node_intval(int64_t value);
 node_t make_node_boolval(bool value);
+node_t make_node_strval(char* string);
 
 /* A completer */
 
 
-#line 109 "y.tab.c"
+#line 110 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -249,13 +250,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 42 "grammar.y"
+#line 43 "grammar.y"
 
     int32_t intval;
     char * strval;
     node_t ptr;
 
-#line 259 "y.tab.c"
+#line 260 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -635,12 +636,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    83,    83,    88,    95,   100,   105,   108,   117,   121,
-     125,   139,   145,   146,   149,   150,   153,   157,   161,   165,
-     169,   173,   177,   181,   185,   191,   194,   198,   202,   206,
-     210,   214,   218,   222,   226,   230,   234,   238,   242,   246,
-     250,   254,   258,   262,   266,   270,   274,   278,   282,   286,
-     290,   294,   298,   302,   308,   309,   312,   313,   316
+       0,    84,    84,    89,    96,   101,   106,   109,   118,   122,
+     126,   152,   158,   163,   168,   169,   172,   176,   180,   184,
+     188,   192,   196,   200,   204,   210,   216,   220,   224,   228,
+     232,   236,   240,   244,   248,   252,   256,   260,   264,   268,
+     272,   276,   280,   284,   288,   292,   296,   300,   304,   308,
+     312,   316,   320,   324,   330,   334,   340,   344,   349
 };
 #endif
 
@@ -1573,381 +1574,445 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 84 "grammar.y"
+#line 85 "grammar.y"
         {
         (yyval.ptr) = make_node(NODE_PROGRAM, 2, (yyvsp[-1].ptr), (yyvsp[0].ptr));
         *program_root = (yyval.ptr);
         }
-#line 1582 "y.tab.c"
+#line 1583 "y.tab.c"
     break;
 
   case 3:
-#line 89 "grammar.y"
+#line 90 "grammar.y"
         {
         (yyval.ptr) = make_node(NODE_PROGRAM, 2, NULL, (yyvsp[0].ptr));
         *program_root = (yyval.ptr);
         }
-#line 1591 "y.tab.c"
+#line 1592 "y.tab.c"
     break;
 
   case 4:
-#line 96 "grammar.y"
+#line 97 "grammar.y"
         {
         (yyval.ptr) = make_node(NODE_LIST,1, (yyvsp[0].ptr));
         }
-#line 1599 "y.tab.c"
+#line 1600 "y.tab.c"
     break;
 
   case 5:
-#line 100 "grammar.y"
+#line 101 "grammar.y"
         {
         (yyval.ptr) = make_node(NODE_LIST,1, NULL);
         }
-#line 1607 "y.tab.c"
+#line 1608 "y.tab.c"
     break;
 
   case 6:
-#line 105 "grammar.y"
+#line 106 "grammar.y"
                  { (yyval.ptr) = NULL; }
-#line 1613 "y.tab.c"
+#line 1614 "y.tab.c"
     break;
 
   case 7:
-#line 108 "grammar.y"
+#line 109 "grammar.y"
             { (yyval.ptr) = NULL; }
-#line 1619 "y.tab.c"
+#line 1620 "y.tab.c"
     break;
 
   case 8:
-#line 118 "grammar.y"
+#line 119 "grammar.y"
         {
         (yyval.ptr) = make_node_type(TYPE_INT);
         }
-#line 1627 "y.tab.c"
+#line 1628 "y.tab.c"
     break;
 
   case 9:
-#line 122 "grammar.y"
+#line 123 "grammar.y"
         {
         (yyval.ptr) = make_node_type(TYPE_BOOL);
         }
-#line 1635 "y.tab.c"
+#line 1636 "y.tab.c"
     break;
 
   case 10:
-#line 126 "grammar.y"
+#line 127 "grammar.y"
         {
         (yyval.ptr) = make_node_type(TYPE_VOID);
         }
-#line 1643 "y.tab.c"
+#line 1644 "y.tab.c"
     break;
 
   case 11:
-#line 140 "grammar.y"
+#line 153 "grammar.y"
         {
                 (yyval.ptr) = make_node(NODE_FUNC,3, (yyvsp[-4].ptr), (yyvsp[-3].ptr), (yyvsp[0].ptr));
         }
-#line 1651 "y.tab.c"
+#line 1652 "y.tab.c"
+    break;
+
+  case 12:
+#line 159 "grammar.y"
+                {
+                    (yyval.ptr) = make_node(NODE_LIST, 1, (yyvsp[0].ptr));
+                }
+#line 1660 "y.tab.c"
+    break;
+
+  case 13:
+#line 163 "grammar.y"
+                {
+                    (yyval.ptr) = make_node(NODE_LIST, 1, NULL);
+                }
+#line 1668 "y.tab.c"
     break;
 
   case 16:
-#line 154 "grammar.y"
+#line 173 "grammar.y"
             {
             (yyval.ptr) = (yyvsp[-1].ptr);
             }
-#line 1659 "y.tab.c"
+#line 1676 "y.tab.c"
     break;
 
   case 17:
-#line 158 "grammar.y"
+#line 177 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_IF, 3 , (yyvsp[-4].ptr), (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1667 "y.tab.c"
+#line 1684 "y.tab.c"
     break;
 
   case 18:
-#line 162 "grammar.y"
+#line 181 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_IF, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1675 "y.tab.c"
+#line 1692 "y.tab.c"
     break;
 
   case 19:
-#line 166 "grammar.y"
+#line 185 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_WHILE, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1683 "y.tab.c"
+#line 1700 "y.tab.c"
     break;
 
   case 20:
-#line 170 "grammar.y"
+#line 189 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_FOR, 4, (yyvsp[-6].ptr), (yyvsp[-4].ptr),(yyvsp[-2].ptr) ,(yyvsp[0].ptr));
             }
-#line 1691 "y.tab.c"
+#line 1708 "y.tab.c"
     break;
 
   case 21:
-#line 174 "grammar.y"
+#line 193 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_DOWHILE, 2, (yyvsp[-5].ptr), (yyvsp[-2].ptr));
             }
-#line 1699 "y.tab.c"
+#line 1716 "y.tab.c"
     break;
 
   case 22:
-#line 178 "grammar.y"
+#line 197 "grammar.y"
             {
             (yyval.ptr) = (yyvsp[0].ptr);
             }
-#line 1707 "y.tab.c"
+#line 1724 "y.tab.c"
     break;
 
   case 23:
-#line 182 "grammar.y"
+#line 201 "grammar.y"
             {
             (yyval.ptr) = NULL;
             }
-#line 1715 "y.tab.c"
+#line 1732 "y.tab.c"
     break;
 
   case 24:
-#line 186 "grammar.y"
+#line 205 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_PRINT, 1, (yyvsp[-2].ptr));
             }
-#line 1723 "y.tab.c"
+#line 1740 "y.tab.c"
+    break;
+
+  case 25:
+#line 211 "grammar.y"
+            {
+                (yyval.ptr) = make_node(NODE_BLOCK, 2, (yyvsp[-2].ptr), (yyvsp[-1].ptr));
+            }
+#line 1748 "y.tab.c"
     break;
 
   case 26:
-#line 195 "grammar.y"
+#line 217 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_MUL, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1731 "y.tab.c"
+#line 1756 "y.tab.c"
     break;
 
   case 27:
-#line 199 "grammar.y"
+#line 221 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_DIV, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1739 "y.tab.c"
+#line 1764 "y.tab.c"
     break;
 
   case 28:
-#line 203 "grammar.y"
+#line 225 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_PLUS, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1747 "y.tab.c"
+#line 1772 "y.tab.c"
     break;
 
   case 29:
-#line 207 "grammar.y"
+#line 229 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_MINUS, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1755 "y.tab.c"
+#line 1780 "y.tab.c"
     break;
 
   case 30:
-#line 211 "grammar.y"
+#line 233 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_MOD, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1763 "y.tab.c"
+#line 1788 "y.tab.c"
     break;
 
   case 31:
-#line 215 "grammar.y"
+#line 237 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_LT, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1771 "y.tab.c"
+#line 1796 "y.tab.c"
     break;
 
   case 32:
-#line 219 "grammar.y"
+#line 241 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_GT, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1779 "y.tab.c"
+#line 1804 "y.tab.c"
     break;
 
   case 33:
-#line 223 "grammar.y"
+#line 245 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_MINUS, 1, (yyvsp[0].ptr));
             }
-#line 1787 "y.tab.c"
+#line 1812 "y.tab.c"
     break;
 
   case 34:
-#line 227 "grammar.y"
+#line 249 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_GE, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1795 "y.tab.c"
+#line 1820 "y.tab.c"
     break;
 
   case 35:
-#line 231 "grammar.y"
+#line 253 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_LE, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1803 "y.tab.c"
+#line 1828 "y.tab.c"
     break;
 
   case 36:
-#line 235 "grammar.y"
+#line 257 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_EQ, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1811 "y.tab.c"
+#line 1836 "y.tab.c"
     break;
 
   case 37:
-#line 239 "grammar.y"
+#line 261 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_NE, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1819 "y.tab.c"
+#line 1844 "y.tab.c"
     break;
 
   case 38:
-#line 243 "grammar.y"
+#line 265 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_AND, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1827 "y.tab.c"
+#line 1852 "y.tab.c"
     break;
 
   case 39:
-#line 247 "grammar.y"
+#line 269 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_OR, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1835 "y.tab.c"
+#line 1860 "y.tab.c"
     break;
 
   case 40:
-#line 251 "grammar.y"
+#line 273 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_BAND, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1843 "y.tab.c"
+#line 1868 "y.tab.c"
     break;
 
   case 41:
-#line 255 "grammar.y"
+#line 277 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_BOR, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1851 "y.tab.c"
+#line 1876 "y.tab.c"
     break;
 
   case 42:
-#line 259 "grammar.y"
+#line 281 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_BXOR, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1859 "y.tab.c"
+#line 1884 "y.tab.c"
     break;
 
   case 43:
-#line 263 "grammar.y"
+#line 285 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_SRL, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1867 "y.tab.c"
+#line 1892 "y.tab.c"
     break;
 
   case 44:
-#line 267 "grammar.y"
+#line 289 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_SRA, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1875 "y.tab.c"
+#line 1900 "y.tab.c"
     break;
 
   case 45:
-#line 271 "grammar.y"
+#line 293 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_SLL, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1883 "y.tab.c"
+#line 1908 "y.tab.c"
     break;
 
   case 46:
-#line 275 "grammar.y"
+#line 297 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_NOT, 1, (yyvsp[0].ptr));
             }
-#line 1891 "y.tab.c"
+#line 1916 "y.tab.c"
     break;
 
   case 47:
-#line 279 "grammar.y"
+#line 301 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_BNOT, 1, (yyvsp[0].ptr));
             }
-#line 1899 "y.tab.c"
+#line 1924 "y.tab.c"
     break;
 
   case 48:
-#line 283 "grammar.y"
+#line 305 "grammar.y"
             {
             (yyval.ptr) = (yyvsp[-1].ptr);
             }
-#line 1907 "y.tab.c"
+#line 1932 "y.tab.c"
     break;
 
   case 49:
-#line 287 "grammar.y"
+#line 309 "grammar.y"
             {
             (yyval.ptr) = make_node(NODE_AFFECT, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
             }
-#line 1915 "y.tab.c"
+#line 1940 "y.tab.c"
     break;
 
   case 50:
-#line 291 "grammar.y"
+#line 313 "grammar.y"
             {
             (yyval.ptr) = NULL;
             }
-#line 1923 "y.tab.c"
+#line 1948 "y.tab.c"
     break;
 
   case 51:
-#line 295 "grammar.y"
+#line 317 "grammar.y"
             {
             (yyval.ptr) = make_node_boolval(true);
             }
-#line 1931 "y.tab.c"
+#line 1956 "y.tab.c"
     break;
 
   case 52:
-#line 299 "grammar.y"
+#line 321 "grammar.y"
             {
             (yyval.ptr) = make_node_boolval(false);
             }
-#line 1939 "y.tab.c"
+#line 1964 "y.tab.c"
     break;
 
   case 53:
-#line 303 "grammar.y"
+#line 325 "grammar.y"
             {
             (yyval.ptr) = (yyvsp[0].ptr);
             }
-#line 1947 "y.tab.c"
+#line 1972 "y.tab.c"
+    break;
+
+  case 54:
+#line 331 "grammar.y"
+                {
+                    (yyval.ptr) = make_node(NODE_LIST, 2, (yyvsp[-2].ptr), (yyvsp[0].ptr));
+                }
+#line 1980 "y.tab.c"
+    break;
+
+  case 55:
+#line 335 "grammar.y"
+                {
+                    (yyval.ptr) = make_node(NODE_LIST, 1, (yyvsp[0].ptr));
+                }
+#line 1988 "y.tab.c"
+    break;
+
+  case 56:
+#line 341 "grammar.y"
+                {
+                    (yyval.ptr) = make_node_ident((yyvsp[0].ptr));
+                }
+#line 1996 "y.tab.c"
+    break;
+
+  case 57:
+#line 344 "grammar.y"
+                            {
+                    (yyval.ptr) = NULL;
+                }
+#line 2004 "y.tab.c"
+    break;
+
+  case 58:
+#line 350 "grammar.y"
+            {
+                (yyval.ptr) = NULL;
+            }
+#line 2012 "y.tab.c"
     break;
 
 
-#line 1951 "y.tab.c"
+#line 2016 "y.tab.c"
 
       default: break;
     }
@@ -2179,7 +2244,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 319 "grammar.y"
+#line 355 "grammar.y"
 
 
 /* A completer et/ou remplacer avec d'autres fonctions */

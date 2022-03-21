@@ -32,6 +32,7 @@ node_t make_node_ident(char* identifier);
 node_t make_node_type(node_type type);
 node_t make_node_intval(int64_t value);
 node_t make_node_boolval(bool value);
+node_t make_node_strval(char* string);
 
 /* A completer */
 
@@ -109,10 +110,10 @@ maindecl:   { $$ = NULL; }
             ;
 
 vardecl     : type listtypedecl TOK_SEMICOL
-        {
-        $$ = make_node(NODE_LIST,);
-        }
-        ;
+            {
+                $$ = make_node(NODE_LIST, 1, $2);
+            }
+            ;
 
 type        : TOK_INT
         {
@@ -129,11 +130,23 @@ type        : TOK_INT
         ;
 
 listtypedecl    : decl
+                {
+                    $$ = make_node(NODE_LIST, 1, $1);
+                }
                 | listtypedecl TOK_COMMA decl
+                {
+                    $$ = make_node(NODE_LIST, 2, $1, $3);
+                }
                 ;
 
 decl        : ident
+            {
+                $$ = make_node_ident($1);
+            }
             | ident TOK_AFFECT expr
+            {
+                $$ = make_node_ident($1);
+            }
             ;
 
 maindecl        : type ident TOK_LPAR TOK_RPAR block
@@ -143,7 +156,13 @@ maindecl        : type ident TOK_LPAR TOK_RPAR block
                 ;
 
 listinst        : listinstnonnull
+                {
+                    $$ = make_node(NODE_LIST, 1, $1);
+                }
                 |
+                {
+                    $$ = make_node(NODE_LIST, 1, NULL);
+                }
                 ;
 
 listinstnonnull : inst
@@ -189,6 +208,9 @@ inst        : expr TOK_SEMICOL
             ;
 
 block       : TOK_LACC listdecl listinst TOK_RACC
+            {
+                $$ = make_node(NODE_BLOCK, 2, $2, $3);
+            }
             ;
 
 expr        : expr TOK_MUL expr
@@ -306,14 +328,28 @@ expr        : expr TOK_MUL expr
             ;
 
 listparamprint  : listparamprint TOK_COMMA paramprint
+                {
+                    $$ = make_node(NODE_LIST, 2, $1, $3);
+                }
                 | paramprint
+                {
+                    $$ = make_node(NODE_LIST, 1, $1);
+                }
                 ;
 
 paramprint      : ident
-                | TOK_STRING
+                {
+                    $$ = make_node_ident($1);
+                }
+                | TOK_STRING{
+                    $$ = NULL;
+                }
                 ;
 
 ident       : TOK_IDENT
+            {
+                $$ = NULL;
+            }
             ;
 
 %%
