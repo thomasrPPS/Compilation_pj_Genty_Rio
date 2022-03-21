@@ -99,7 +99,7 @@ listdecl:   listdeclnonnull
         }
         |
         {
-        $$ = make_node(NODE_LIST,1, NULL);
+        $$ = make_node(NODE_LIST, 1, NULL);
         }
         ;
 
@@ -109,9 +109,9 @@ listdeclnonnull: { $$ = NULL; }
 maindecl:   { $$ = NULL; }
             ;
 
-vardecl     : type listtypedecl TOK_SEMICOL
+vardecl    : type listtypedecl TOK_SEMICOL
             {
-                $$ = make_node(NODE_LIST, 1, $2);
+                $$ = make_node(NODE_LIST, 2, $1, $2);
             }
             ;
 
@@ -141,18 +141,18 @@ listtypedecl    : decl
 
 decl        : ident
             {
-                $$ = make_node_ident($1);
+                $$ = make_node(NODE_IDENT, 1, $1);
             }
             | ident TOK_AFFECT expr
             {
-                $$ = make_node_ident($1);
+                $$ = make_node(NODE_IDENT, 2, $1, $3);
             }
             ;
 
 maindecl        : type ident TOK_LPAR TOK_RPAR block
-        {
-                $$ = make_node(NODE_FUNC,3, $1, $2, $5);
-        }
+                {
+                    $$ = make_node(NODE_FUNC,3, $1, $2, $5);
+                }
                 ;
 
 listinst        : listinstnonnull
@@ -166,7 +166,13 @@ listinst        : listinstnonnull
                 ;
 
 listinstnonnull : inst
+                {
+                    $$ = make_node(NODE_LIST, 1, $1);
+                }
                 | listinstnonnull inst
+                {
+                    $$ = make_node(NODE_LIST, 2, $1, $2);
+                }
                 ;
 
 inst        : expr TOK_SEMICOL
@@ -348,23 +354,24 @@ paramprint      : ident
 
 ident       : TOK_IDENT
             {
-                $$ = NULL;
+                $$ = (NULL);
             }
             ;
 
 %%
 
+
 /* A completer et/ou remplacer avec d'autres fonctions */
 node_t make_node(node_nature nature, int nops, ...) {
     va_list ap;
-    node_t node;
+    node_t node = (node_t) malloc(sizeof(node_s));
     node->nops = nops;
     node->lineno = yylineno;
     node->nature = nature;
 
     va_start(ap, nops);
 
-    node->opr = (node_t *) malloc(nops*sizeof(node_t));
+    node->opr = (node_t *) malloc(nops*sizeof(node_s));
 
     for(int i=0;i<nops;i++){
         node->opr[i] = va_arg(ap, node_t);
@@ -376,7 +383,7 @@ node_t make_node(node_nature nature, int nops, ...) {
 }
 
 node_t make_node_ident(char* identifier){
-    node_t node = (node_t) malloc(sizeof(node_t));
+    node_t node = (node_t) malloc(sizeof(node_s));
     node->nature = NODE_IDENT;
     node->lineno = yylineno;
     node->nops = 0; 
@@ -384,11 +391,14 @@ node_t make_node_ident(char* identifier){
     node->type = TYPE_NONE; // initialisation car type maj dans passe 1
     node->offset = 0;  // initialisation car offset maj dans passe 1
     node->global_decl = true; // maj dans passe 1
+    node->decl_node = NULL;
+    node->opr = NULL;
+    node->value = 0;
     return node;
 }
 
 node_t make_node_type(node_type type){
-    node_t node = (node_t) malloc(sizeof(node_t));
+    node_t node = (node_t) malloc(sizeof(node_s));
     node->nature = NODE_TYPE;
     node->lineno = yylineno;
     node->nops = 0; 
@@ -396,11 +406,14 @@ node_t make_node_type(node_type type){
     node->type = type; // initialisation car type maj dans passe 1
     node->offset = 0;  // initialisation car offset maj dans passe 1
     node->global_decl = true; // maj dans passe 1
+    node->decl_node = NULL;
+    node->opr = NULL;
+    node->value = 0;
     return node;
 }
 
 node_t make_node_intval(int64_t value){
-    node_t node = (node_t) malloc(sizeof(node_t));
+    node_t node = (node_t) malloc(sizeof(node_s));
     node->nature = NODE_INTVAL;
     node->lineno = yylineno;
     node->nops = 0; 
@@ -409,11 +422,13 @@ node_t make_node_intval(int64_t value){
     node->offset = 0;  // initialisation car offset maj dans passe 1
     node->global_decl = true; // maj dans passe 1
     node->value = value;
+    node->decl_node = NULL;
+    node->opr = NULL;
     return node;
 }
 
 node_t make_node_boolval(bool value){
-    node_t node = (node_t) malloc(sizeof(node_t));
+    node_t node = (node_t) malloc(sizeof(node_s));
     node->nature = NODE_BOOLVAL;
     node->lineno = yylineno;
     node->nops = 0; 
@@ -422,11 +437,13 @@ node_t make_node_boolval(bool value){
     node->offset = 0;  // initialisation car offset maj dans passe 1
     node->global_decl = true; // maj dans passe 1
     node->value = value;
+    node->decl_node = NULL;
+    node->opr = NULL;
     return node;
 }
 
 node_t make_node_strval(char* string){
-    node_t node = (node_t) malloc(sizeof(node_t));
+    node_t node = (node_t) malloc(sizeof(node_s));
     node->nature = NODE_STRINGVAL;
     node->lineno = yylineno;
     node->nops = 0; 
@@ -435,13 +452,13 @@ node_t make_node_strval(char* string){
     node->offset = 0;  // initialisation car offset maj dans passe 1
     node->global_decl = true; // maj dans passe 1
     node->str = string;
+    node->decl_node = NULL;
+    node->opr = NULL;
     return node;
 }
 
-//node_t make_node_func()
-
 void analyse_tree(node_t root) {
-    //dump_tree(root, "apres_syntaxe.dot");
+    dump_tree(root, "apres_syntaxe.dot");
     if (!stop_after_syntax) {
         analyse_passe_1(root);
         //dump_tree(root, "apres_passe_1.dot");

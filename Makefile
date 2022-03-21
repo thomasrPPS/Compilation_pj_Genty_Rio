@@ -2,7 +2,7 @@
 EXE=minicc
 UTILS=utils
 
-DEBUG_LEX=1
+DEBUG_LEX=0
 DEBUG_YACC=0
 
 ifeq ($(DEBUG_LEX),1)
