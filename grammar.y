@@ -72,8 +72,8 @@ node_t make_node_strval(char* string);
 %left TOK_MUL TOK_DIV TOK_MOD
 %nonassoc TOK_UMINUS TOK_NOT TOK_BNOT
 
-
-
+%type <intval> TOK_INTVAL;
+%type <strval> TOK_IDENT TOK_STRING;
 
 %type <ptr> program listdecl listdeclnonnull vardecl ident type listtypedecl decl maindecl listinst listinstnonnull inst block expr listparamprint paramprint
 
@@ -95,23 +95,26 @@ program:
 
 listdecl:   listdeclnonnull
         {
-        $$ = make_node(NODE_LIST,1, $1);
+        $$ = make_node(NODE_DECLS,1, $1);
         }
         |
         {
-        $$ = make_node(NODE_LIST, 1, NULL);
+        $$ = make_node(NODE_DECLS, 1, NULL);
         }
         ;
 
-listdeclnonnull: { $$ = NULL; }
-            ;
-
-maindecl:   { $$ = NULL; }
+listdeclnonnull:vardecl
+             { $$ = $1; }
+            |
+            listdeclnonnull vardecl
+            {
+                $$ = make_node(NODE_LIST, 2, $1, $2);
+            }
             ;
 
 vardecl    : type listtypedecl TOK_SEMICOL
             {
-                $$ = make_node(NODE_LIST, 2, $1, $2);
+                $$ = make_node(NODE_DECLS, 2, $1, $2);
             }
             ;
 
@@ -131,7 +134,7 @@ type        : TOK_INT
 
 listtypedecl    : decl
                 {
-                    $$ = make_node(NODE_LIST, 1, $1);
+                    $$ = make_node(NODE_DECLS, 1, $1);
                 }
                 | listtypedecl TOK_COMMA decl
                 {
@@ -151,7 +154,7 @@ decl        : ident
 
 maindecl        : type ident TOK_LPAR TOK_RPAR block
                 {
-                    $$ = make_node(NODE_FUNC,3, $1, $2, $5);
+                    $$ = make_node(NODE_FUNC, 3, $1, $2, $5);
                 }
                 ;
 
@@ -317,7 +320,7 @@ expr        : expr TOK_MUL expr
             }
             | TOK_INTVAL
             {
-            $$ = NULL;
+            $$ = make_node_intval($1);
             }
             | TOK_TRUE
             {
@@ -345,16 +348,16 @@ listparamprint  : listparamprint TOK_COMMA paramprint
 
 paramprint      : ident
                 {
-                    $$ = make_node_ident($1);
+                    $$ = $1;
                 }
                 | TOK_STRING{
-                    $$ = NULL;
+                    $$ = make_node_strval($1);
                 }
                 ;
 
 ident       : TOK_IDENT
             {
-                $$ = (NULL);
+                $$ = make_node_ident($1);
             }
             ;
 
@@ -390,7 +393,7 @@ node_t make_node_ident(char* identifier){
     node->ident = identifier;
     node->type = TYPE_NONE; // initialisation car type maj dans passe 1
     node->offset = 0;  // initialisation car offset maj dans passe 1
-    node->global_decl = true; // maj dans passe 1
+    node->global_decl = false; // maj dans passe 1
     node->decl_node = NULL;
     node->opr = NULL;
     node->value = 0;
