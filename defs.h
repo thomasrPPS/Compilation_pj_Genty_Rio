@@ -25,7 +25,7 @@ typedef enum node_nature_s {
     NODE_DECL,
     NODE_IDENT,
     NODE_TYPE,
-    NODE_INTVAL,
+    NODE_INTVAL,      
     NODE_BOOLVAL,
     NODE_STRINGVAL,
     NODE_FUNC,
