@@ -13,19 +13,130 @@
 #include "common.h"
 #include "arch.h"
 
-
+#define RED "\e[0;31m"
+#define NC "\e[0m"
 extern char * infile;
 extern char * outfile;
 int32_t trace_level = DEFAULT_TRACE_LEVEL;
 extern bool stop_after_syntax;
 extern bool stop_after_verif;
+bool incomp=0;
 
+void affiche_help(){
+	printf("  OPTIONS helper 4 minicc \n\n");
+	printf("  Utilisation : ./minicc_ref <options> <infile>\n\n");
+	printf("  -b : affiche une banière indiquant le nom du compilateur \n          et des membres du groupe \n");
+	printf("  -o <filename> : Définit le nom du fichier assembleur produit \n          (défaut : out.s)\n");
+	printf("  -t <int> : Définit le niveau de trace à utiliser entre 0 et 5 \n          (0 = pas de trace ; 5 = toutes les traces defaut = 0)\n");
+	printf("  -r <int> : Définit le nombre maximum de registres à utiliser, \n          entre 4 et 8 (défaut : 8)\n");
+	printf("  -s : Arrêter la compilation après l’analyse syntaxique \n          (défaut = non)\n");
+	printf("  -v : Arrêter la compilation après la passe de vérifications \n          (défaut = non)\n");
+	printf("  -h : Afficher la liste des options (fonction d’usage) \n          et arrêter le parsing des arguments\n\n");
+}	
 
-void parse_args(int argc, char ** argv) {
-    // A implementer (la ligne suivante est a changer)
-    infile = argv[1];
+void affiche_membres(){
+	printf("oooo     oooo ooooo oooo   oooo ooooo        oooooooo8   oooooooo8 \n 8888o   888   888   8888o  88   888       o888     88 o888     88 \n 88 888o8 88   888   88 888o88   888       888         888         \n 88  888  88   888   88   8888   888       888o     oo 888o     oo \no88o  8  o88o o888o o88o    88  o888o       888oooo88   888oooo88  \n                                                              \nKKKKKKKKKKKKKKKKKKKKKKKKKK0KKKKKKKKKKKKKK0000000000000000000000000000KKKKKK\nKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK000000000000000000000000000KKKKKKKK\nKKKKKKKKKKKKXXXXXXKKKKKKKKKKKKKKKKKKK000KKKK00000000000000000000KKKKKKKKKKK\n00KKKKKKXXXXXXXXK0000OO00KKKKK000000KKKKKKKKKKKK0KK000000KKKKKKKKKKKKKKKKXX\ndxxkOO0KKXXXXXX0xl:::;:loxkOOOkxdxkO00KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKXXXXXX\nxddxddodOKKXK0xl;'''''''',::::::::ldxxxk00KKKKKKKKKKKKKKKKKKXXXXXXXXXXXXXNN\nxdxdoxk0KXXKxc,'.....'..........'',;:clodk00KKKKKKKKKKKKXXXXXXXXXXXXXXXXXNN\nxooxk0KKKKXOc'.............  ..''..,;;:loxOO0KXXKXXXXXXXXXXXXXXXXXNNNNNNNNN\ndxk0KXKkcckd,..'..............'','.';::cldkkO0KXXXXXXXXXXXNNNNNNNNNNNNNNWWW\nOKKXXX0d,.....'..,;;;;;;;;,,,,,,,;,',:;;:lxkO0KK00KKXXXXXXNNNNNNNWWWWWWWWWW\nXXXXXX0kl'....';ccccccccc::::;;,,,,''''.';clxxollodxxxkO0XNNNNWWWWWWMMMMWWX\nXXXXXXXOl'...,cllllllllcccccc:;;;;,'......,cdc....,''',;cdkKNWWWMMMMMMWXOkx\nXXXXXXKk:....:lc::;;;::cccc::::;;;;;,,,'.';cl,.   ......,;:cxKWMMMNXK0000Ok\nXXXXNX0o,...:lc:;,'...',;;;;;,,,,,;:ldo;';cc'.....,;:::;;,,;ckXXKKKKXNWMMNO\nXXXXXX0l'..;llcc:;,'..',,;;,......';dOd;,;:'..';:cccccccccc::lOXNWMMMMMMMMX\nXXXXXNOc,.,lllc:,......;:c;'...'''''cxl,,:;..,::cccccc:;::loolOWWKKWMMMMMMW\nXXXNNNxc:,colllc:;,',,,;:c;,.....',,coc,;cc,'';::::c:,''',;cddkX0dxXMMMMMMM\nXXXNNNk:;codolcccc::c:;:cc:,'''..,:cldc;cl:::;,''';cc:,'',:cldkkdodKMMMMMMM\nXNNNNN0lcodoolccc:::;;:cccl:,;;;;:oxxdc;oo,;c;'...,cllccccllloxxolo0WMMMMWX\nXXNNNNNkooooooolc:;,,;;;;,;:;,;::cldoc:oOkl;cc;,,,::;;;;:ccllldxoloOWMMMNOx\nXXXXNNNXOdolooolc:;;;,'''...'',;:lddc;lKWXOdllllcc:,',,;:cccllodoloONMWXkdo\nKKKXXXXXKxlloolc::;;;,'.....',,;codoxOKWWWKOxoollc::;,',,,;:clooolldOK0kdx0\nKKKKKKKK0xlooolc:;,'''......',,;lk0KNWWMMMNO0Odlllc:;,'',;:::coollllodddxKW\nXXXXXKKKKkooool:;;;,,'.......';:dKWMMMMMMMWKOXKOdlc:;;;;;;;;;coolllloooodk0\nKKKXXXXXXOooolc:::::;,'.''''',;o0WMMMMMMMMMN0KWWXOo:;,,'''.'';lllllllooolll\n00KKXXKKOdolllc;;::;;,,''''',;lONMMMMMMMMMMWK0XXXKxl:;,'''',,:lllllllolllll\n0KKKXXKkdooll::;;;::;;,,,,,',oOKNMMMMMWNXK0kO0kocloolc:::;;;;coooooolllllll\nddkkkkxdoolllc;,,,,,'.''',,:o0X0KNWW0kxdolc:lxo,',::cccc:::;;coooooolllllcc\n:cloooooolllccc:,''......';d0K0xdxKN0xxkkOxl:,'....,;::::::;;coooooooollcc:\n;;:cloolllccccc::;;'...',;oOKd;,;lk0XXKK0xc,'........';;::;;;:oooooooollc:;\n,,,;cllllccc:::::;;'.'',,cON0:',;:okOOxl:''............';;;;;:looooollllc:;\n\nProject by Rio & Genty \n");
 }
 
+void testInt(int min, int max, int test){
+	if (test <= max && test >= min){}
+	else{
+		fprintf(stderr,RED "[CRITICAL ERROR]\n");
+		fprintf(stderr,NC"option non compatible avec %d \n",test);
+		exit(1);	
+	}
+}
+void testStr(char * test, char ASMouC){
+	int i=0;
+	while (test[i] != '\0'){
+		if ((test[i] <= 'z' && test[i] >= '0') || (test[i] == '.' && test[i+1] == ASMouC )){}
+		else{
+			fprintf(stderr,RED "[CRITICAL ERROR]\n");
+			fprintf(stderr,NC"option non compatible avec %s \n",test);
+			exit(1);	
+			}
+		i++;
+	}
+}
+
+void argIncompatible(char *UN, char *DEUX, char *test){
+	if((strcmp(test,UN) || strcmp(test,DEUX)) && incomp == 0){
+		incomp =1;
+	}
+	else if((strcmp(test,UN) || strcmp(test,DEUX)) && incomp == 1){
+		fprintf(stderr,RED "[CRITICAL ERROR]\n");
+		fprintf(stderr,NC"arguments %s et %s incompatibles \n",UN,DEUX);
+		exit(1);
+	}
+}
+
+void parse_args(int argc, char ** argv) {
+	infile = NULL;
+    for (int i=1; i<argc; i++){
+    	if (argv[i][0] != '-'){
+    		testStr(argv[i],'c');
+    		infile = argv[i];
+    		printf("le nom du fichier sur lequel effectuer la compilation %s \n",argv[i]);
+    		//break;
+    	}
+    	else{
+			switch (argv[i][1]){
+				case 'h':
+					affiche_help();
+					exit(1);
+					break;
+				case 'b':
+					affiche_membres();
+					exit(1);
+					break;
+				case 'o':
+					//TESTS à faire !!! si pas les bons caractères
+					testStr(argv[i+1],'s');
+					outfile = argv[i+1];
+					printf("le nom du fichier asm produit est %s \n", outfile);
+					i++;
+					break;
+				case 't':
+					//TESTS à faire !!! si pas les bons caractères
+					testInt(0,5,atoi(argv[i+1]));
+					trace_level = atoi(argv[i+1]);
+					printf("le trace level est fixé à %d \n",trace_level);
+					i++;
+					break;
+				case 'r':
+					//TESTS à faire !!! si pas les bons caractères
+					testInt(4,8,atoi(argv[i+1]));
+					set_max_registers(atoi(argv[i+1]));
+					printf("le nombre de registres est fixé à %d \n",atoi(argv[i+1]));
+					i++;
+					break;
+				case 's':
+					argIncompatible("-s","-v",argv[i]);
+					stop_after_syntax = 1;
+					printf("arrêt après la phase d'analyse syntaxique \n");
+					break;
+				case 'v':
+					argIncompatible("-s","-v",argv[i]);
+					stop_after_verif = 1;
+					printf("arrêt après la phase de vérification \n");
+					break;
+				default:
+					printf("%s ",argv[i]);
+					fprintf(stderr,RED "[CRITICAL ERROR]\n");
+					fprintf(stderr,NC "n'est pas une option de minicc \nannulation en cours \n\n");
+					affiche_help();
+					exit(1);
+					break;
+			}
+		}
+    }
+	if (infile == NULL){
+		fprintf(stderr,RED "[CRITICAL ERROR]\n");
+		fprintf(stderr,NC "pas de fichier .c dans la commande \n\n");
+		affiche_help();
+		exit(1);
+	}
+}
 
 
 void free_nodes(node_t n) {
