@@ -16,7 +16,6 @@ node_type current_type= 0;
 
 	- Fonction respect des regles 
 		4 operations entre int pas de bool => fait
-	- divizion par 0
 	- global decl doivent etre des affectations pas d'operations
 	Regles Page I-20
 	
@@ -97,13 +96,42 @@ void check_div_type(node_t noeud){
 }
 
 
-void check_bool_expr();
+void check_bool_expr(node_t noeud){
+	if (noeud->opr[0]->type != TYPE_BOOL){
+		errno = EINVAL;
+		printf("ERROR on line %d \n", noeud->opr[0]->lineno);
+		perror("Argument of IF statement must be boolean");
+		exit(EXIT_FAILURE);
+	}
+}
 
-void check_main_void();
+void check_affect_type(node_t noeud){
+	node_type ARG1, ARG2;
+	ARG1 = noeud->opr[0]->type;
+	ARG2 = noeud->opr[1]->type;
+	if (noeud->opr[0]->type && noeud->opr[1]->type){		
+		if (noeud->opr[0]->type != noeud->opr[1]->type){	
+			errno = EINVAL;
+			printf("ERROR on line %d \n", noeud->opr[0]->lineno);
+			perror("Can't affect a variable to a type which different from the declared one");
+			exit(EXIT_FAILURE);
+		}
+	}
+}
 
-void check_affect_type();
-
-void global_decl_intval();
+void check_global_decl(node_t noeud){
+	if (noeud->opr[0]->global_decl){
+		if ((noeud->opr[1]->nature == NODE_PLUS) 
+			|| (noeud->opr[1]->nature == NODE_MINUS) 
+			|| (noeud->opr[1]->nature == NODE_DIV) 
+			|| (noeud->opr[1]->nature == NODE_MUL)){
+			errno = EINVAL;
+			printf("ERROR on line %d \n", noeud->opr[0]->lineno);
+			perror("Can't affect a global variable with an expression");
+			exit(EXIT_FAILURE);
+		}
+	}
+}
 
 
 
@@ -111,7 +139,6 @@ void analyse_passe_1(node_t root) {
 	node_t variableDecl;
 	if (root->nature == NODE_PROGRAM){
 		push_global_context();
-		printf("push_global_context\n");
 		isGlobal=1; //permet de mettre à jour le global decl de chaque Ident
 	}	
 	
@@ -123,15 +150,13 @@ void analyse_passe_1(node_t root) {
 			if (root->opr[i]->type != 0){
 				current_type = root->opr[i]->type;
 			}
-			//printf("Nature Noeud : %d\n", root->opr[i]->nature);
 			switch(root->opr[i]->nature){
 				case NODE_IDENT :
-					//printf("IDENT ici\n");
 					// On verifie si la variable a déjà été déclarée
 					variableDecl = (node_t) get_decl_node(root->opr[i]->ident);
-					//printf(" ident = %s\n", root->opr[i]->ident);
 					// Si l'identifier est 'main', on l'ignore
 					if (!(strcmp(root->opr[i]->ident, "main"))){
+						// On met bien le main au type void
 						root->opr[i]->type = TYPE_VOID;
 						break;
 					}
@@ -158,37 +183,52 @@ void analyse_passe_1(node_t root) {
 
 					// Maj de decl_node
 					root->opr[i]->decl_node = get_decl_node(root->opr[i]->ident);
-					
-					// Debug prints 
-					// printf("Variable déclaré à : %p\n", root->opr[i]->decl_node);
-					// printf("Le global_decl est après chgmt : %d\n", root->opr[i]->global_decl);
-					// printf("Le type est après chgmt : %d\n", root->opr[i]->type);
 					break;
 				
+				case NODE_EQ :
+					root->opr[i]->type = TYPE_BOOL;
+					break;
+
+
+				case NODE_NE :
+					root->opr[i]->type = TYPE_BOOL;
+					break;
+
+				case NODE_LT :
+					root->opr[i]->type = TYPE_BOOL;
+					break;
+
+				case NODE_GT :
+					root->opr[i]->type = TYPE_BOOL;
+					break;
+
+				case NODE_LE : 
+					root->opr[i]->type = TYPE_BOOL;
+					break;
+
+				case NODE_GE :
+					root->opr[i]->type = TYPE_BOOL;
+					break;
+
 				case NODE_BLOCK :
 					isGlobal=0;
 					push_context();
-					//printf("salut jsuis dans block\n");
 					break;
 
 				case NODE_FUNC :
-					//printf("FUNC ici\n");
 					reset_env_current_offset();
 					break;
 	
 				case NODE_STRINGVAL :
-					// printf("STRINGVAL ici\n");//
 					root->opr[i]->offset = add_string(root->opr[i]->str);
 					break;
 			}	
 		}
-		//printf("Fin analyse\n");
 		if(root->opr[i] != NULL){
 			analyse_passe_1(root->opr[i]);
 		}
 		if(root->nature == NODE_FUNC){
 			root->offset = get_env_current_offset();
-			//printf("allo\n");
 		}
 		if(root->nature == NODE_PLUS){
 			check_add_type(root);
@@ -202,5 +242,17 @@ void analyse_passe_1(node_t root) {
 		if(root->nature == NODE_MUL){
 			check_mul_type(root);
 		}
+		if(root->nature == NODE_IF){
+			check_bool_expr(root);
+		}
+		if(root->nature == NODE_WHILE){
+			check_bool_expr(root);
+		}
+		if(root->nature == NODE_AFFECT){
+			check_affect_type(root);
+		}
+		if(root->nature == NODE_DECL){
+			check_global_decl(root);
+		}	
 	}
 }

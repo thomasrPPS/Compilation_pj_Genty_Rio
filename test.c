@@ -7,6 +7,5 @@ void main () {
 	for (i = s; i < e; i = i + 1) {
 		sum = sum + i;		
  	}
- 	//sum = sum;
  	print ("sum: ", sum , "\n") ;
 }
