@@ -1868,7 +1868,7 @@ yyreduce:
   case 38:
 #line 256 "grammar.y"
             {
-                (yyval.ptr) = make_node(NODE_MINUS, 1, (yyvsp[0].ptr));
+                (yyval.ptr) = make_node(NODE_UMINUS, 1, (yyvsp[0].ptr));
             }
 #line 1874 "y.tab.c"
     break;

@@ -5,7 +5,8 @@ void main () {
 	int i, s = start , e = end ;
 	int sum = 0;
 	for (i = s; i < e; i = i + 1) {
-		sum = sum + i;
+		sum = sum + i;		
  	}
+ 	//sum = sum;
  	print ("sum: ", sum , "\n") ;
 }
