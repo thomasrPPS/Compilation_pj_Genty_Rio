@@ -254,7 +254,7 @@ expr        : expr TOK_MUL expr
             }
             | TOK_MINUS expr %prec TOK_UMINUS
             {
-                $$ = make_node(NODE_MINUS, 1, $2);
+                $$ = make_node(NODE_UMINUS, 1, $2);
             }
             | expr TOK_GE expr
             {
@@ -410,7 +410,7 @@ node_t make_node_type(node_type type){
     node->ident = NULL;
     node->type = type; // initialisation car type maj dans passe 1
     node->offset = 0;  // initialisation car offset maj dans passe 1
-    node->global_decl = true; // maj dans passe 1
+    node->global_decl = false; // maj dans passe 1
     node->decl_node = NULL;
     node->opr = NULL;
     node->value = 0;
@@ -425,7 +425,7 @@ node_t make_node_intval(int64_t value){
     node->ident = NULL;
     node->type = TYPE_INT; // initialisation car type maj dans passe 1
     node->offset = 0;  // initialisation car offset maj dans passe 1
-    node->global_decl = true; // maj dans passe 1
+    node->global_decl = false; // maj dans passe 1
     node->value = value;
     node->decl_node = NULL;
     node->opr = NULL;
@@ -440,7 +440,7 @@ node_t make_node_boolval(bool value){
     node->ident = NULL;
     node->type = TYPE_BOOL; // initialisation car type maj dans passe 1
     node->offset = 0;  // initialisation car offset maj dans passe 1
-    node->global_decl = true; // maj dans passe 1
+    node->global_decl = false; // maj dans passe 1
     node->value = value;
     node->decl_node = NULL;
     node->opr = NULL;
@@ -455,7 +455,7 @@ node_t make_node_strval(char* string){
     node->ident = NULL;
     node->type = TYPE_NONE; // initialisation car type maj dans passe 1
     node->offset = 0;  // initialisation car offset maj dans passe 1
-    node->global_decl = true; // maj dans passe 1
+    node->global_decl = false; // maj dans passe 1
     node->str = string;
     node->decl_node = NULL;
     node->opr = NULL;
@@ -466,7 +466,7 @@ void analyse_tree(node_t root) {
     dump_tree(root, "apres_syntaxe.dot");
     if (!stop_after_syntax) {
         analyse_passe_1(root);
-        //dump_tree(root, "apres_passe_1.dot");
+        dump_tree(root, "apres_passe_1.dot");
         if (!stop_after_verif) {
             create_program(); 
             gen_code_passe_2(root);
