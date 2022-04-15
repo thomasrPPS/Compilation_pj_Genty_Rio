@@ -3,6 +3,9 @@ S_KO 2 :Error line 7: syntax error
 S_KO 3 :Error line 3: syntax error
 S_KO 4 :Error line 4: syntax error
 S_KO 5 :Error line 3: syntax error
+S_KO 6 :Error line 1: Integer out of range
+S_KO 7 :Error line 3: syntax error
+S_KO 8 :Error line 3: syntax error
 S_OK 1 :Test okay
 S_OK 2 :Test okay
 S_OK 3 :Test okay
@@ -13,18 +16,21 @@ V_KO 2 :Error line 1: global variables can only be initialized with a constant v
 V_KO 3 :Error line 5: Return type of 'main()' function should be 'void'.
 V_KO 4 :Error line 4: 'if' condition does not have a boolean type.
 V_KO 5 :Error line 3: 'for' condition does not have a boolean type.
-S_OK 1 :Test okay
-S_OK 2 :Test okay
-S_OK 3 :Test okay
-S_OK 4 :Test okay
-S_OK 5 :Test okay
-G_KO 1 :
-G_KO 2 :
-G_KO 3 :
-G_KO 4 :
-G_KO 5 :
-G_OK 1 :Test okay
-G_OK 2 :Test okay
-G_OK 3 :Test okay
-G_OK 4 :Test okay
-G_OK 5 :pb compilo
+V_KO 6 :Error line 1: Integer out of range
+V_KO 7 :Error line 4: operator '+' cannot have right operand of type TYPE BOOL.
+V_KO 8 :Error line 6: variable 'x' undeclared.
+V_OK 1 :Test okay
+V_OK 2 :Test okay
+V_OK 3 :Test okay
+V_OK 4 :Test okay
+V_OK 5 :Test okay
+G_KO 1 :ce print doit s'afficher
+G_KO 2 :ce print doit s'afficher
+G_KO 3 :ce print doit s'affichererreur si visible
+G_KO 4 :ce print doit s'affichererreur si visible
+G_KO 5 :ce print doit s'affichererreur si visible
+G_OK 1 :ce print doit s'affichererreur si visible
+G_OK 2 :ce print doit s'affichererreur si visible
+G_OK 3 :ce print doit s'affichererreur si visible
+G_OK 4 :ce print doit s'affichererreur si visible
+G_OK 5 :ce print doit s'affichererreur si visible

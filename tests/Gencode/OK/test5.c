@@ -3,4 +3,5 @@ void main (){
 	for(y; y < 668; y = y + 1){
 		print("ko");
 	}
+	print("voila");
 }
