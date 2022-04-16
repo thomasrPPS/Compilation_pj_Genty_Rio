@@ -22,9 +22,12 @@ void check_add_type(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){	
 
 		if (node->opr[0]->type != TYPE_INT || node->opr[1]->type != TYPE_INT){	
-			errno = EINVAL;
-			printf("ERROR on line %d \n", node->opr[0]->lineno);
-			perror("MiniCC can only sum 2 int");
+			if(node->opr[0]->type != TYPE_INT){
+				printf("Error line %d: operator '+' cannot have left operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
+			else if(node->opr[1]->type != TYPE_INT){
+				printf("Error line %d: operator '+' cannot have right operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
 			exit(EXIT_FAILURE);
 		}	
 	}
@@ -40,9 +43,12 @@ void check_minus_type(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){
 
 		if (node->opr[0]->type != TYPE_INT || node->opr[1]->type != TYPE_INT){	
-			errno = EINVAL;
-			printf("ERROR on line %d \n", node->opr[0]->lineno);
-			perror("MiniCC can only substract 2 int");
+			if(node->opr[0]->type != TYPE_INT){
+				printf("Error line %d: operator '-' cannot have left operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
+			else if(node->opr[1]->type != TYPE_INT){
+				printf("Error line %d: operator '-' cannot have right operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
 			exit(EXIT_FAILURE);
 		}	
 	}
@@ -57,9 +63,12 @@ void check_minus_type(node_t node){
 void check_mul_type(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){		
 		if (node->opr[0]->type != TYPE_INT || node->opr[1]->type != TYPE_INT){	
-			errno = EINVAL;
-			printf("ERROR on line %d \n", node->opr[0]->lineno);
-			perror("MiniCC can only multiply 2 int");
+			if(node->opr[0]->type != TYPE_INT){
+				printf("Error line %d: operator '*' cannot have left operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
+			else if(node->opr[1]->type != TYPE_INT){
+				printf("Error line %d: operator '*' cannot have right operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
 			exit(EXIT_FAILURE);
 		}	
 	}
@@ -74,9 +83,12 @@ void check_mul_type(node_t node){
 void check_div_type(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){		
 		if (node->opr[0]->type != TYPE_INT || node->opr[1]->type != TYPE_INT){	
-			errno = EINVAL;
-			printf("ERROR on line %d \n", node->opr[0]->lineno);
-			perror("MiniCC can only divide 2 int");
+			if(node->opr[0]->type != TYPE_INT){
+				printf("Error line %d: operator '/' cannot have left operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
+			else if(node->opr[1]->type != TYPE_INT){
+				printf("Error line %d: operator '/' cannot have right operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
 			exit(EXIT_FAILURE);
 		}	
 	}
@@ -91,9 +103,12 @@ void check_div_type(node_t node){
 void check_mod_type(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){		
 		if (node->opr[0]->type != TYPE_INT || node->opr[1]->type != TYPE_INT){	
-			errno = EINVAL;
-			printf("ERROR on line %d \n", node->opr[0]->lineno);
-			perror("MiniCC can only modulo divide 2 int");
+			if(node->opr[0]->type != TYPE_INT){
+				printf("Error line %d: operator '%%' cannot have left operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
+			else if(node->opr[1]->type != TYPE_INT){
+				printf("Error line %d: operator '%%' cannot have right operand of type TYPE BOOL\n", node->opr[0]->lineno);
+			}
 			exit(EXIT_FAILURE);
 		}	
 	}
@@ -105,13 +120,25 @@ void check_mod_type(node_t node){
 	}
 }
 
-// check that IF and WHILE 
-void check_bool_expr(node_t node){
-	if (node->opr[0]->type != TYPE_BOOL){
-		errno = EINVAL;
-		printf("ERROR on line %d \n", node->opr[0]->lineno);
-		perror("Argument of IF and WHILE statement must be boolean");
-		exit(EXIT_FAILURE);
+// check that IF, DOWHILE, WHILE and FOR gives boolean type expression
+void check_bool_expr(node_t node, int positionnal){
+	if (node->opr[positionnal]->type != TYPE_BOOL && node->opr[positionnal]->type != TYPE_NONE){
+		if (node->nature == NODE_IF){
+			printf("Error line %d: 'if' condition does not have a boolean type\n", node->opr[0]->lineno);
+			exit(EXIT_FAILURE);
+		}
+		else if (node->nature == NODE_WHILE){
+			printf("Error line %d: 'while' condition does not have a boolean type\n", node->opr[0]->lineno);
+			exit(EXIT_FAILURE);
+		}
+		else if (node->nature == NODE_DOWHILE){
+			printf("Error line %d: 'do ... while' condition does not have a boolean type\n", node->opr[0]->lineno);
+			exit(EXIT_FAILURE);
+		}
+		else if (node->nature == NODE_FOR){
+			printf("Error line %d: 'for' condition does not have a boolean type\n", node->opr[0]->lineno);
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
@@ -119,9 +146,7 @@ void check_bool_expr(node_t node){
 void check_bool_op(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){
 		if (node->opr[0]->type != node->opr[1]->type){	
-			errno = EINVAL;
-			printf("ERROR on line %d \n", node->opr[0]->lineno);
-			perror("Two arguments must be the same type");
+			printf("Error line %d: two arguments must be the same type\n", node->opr[0]->lineno);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -132,9 +157,7 @@ void check_affect_type(node_t node){
 	if (node->opr[1] != NULL){
 		if (node->opr[0]->type && node->opr[1]->type){
 			if (node->opr[0]->type != node->opr[1]->type){	
-				errno = EINVAL;
-				printf("ERROR on line %d \n", node->opr[0]->lineno);
-				perror("Can't affect a variable to a type which different from the declared one");
+				printf("Error line %d: cannot affect a variable to a type which different from the declared one\n", node->opr[0]->lineno);
 				exit(EXIT_FAILURE);
 			}
 			else{
@@ -152,15 +175,20 @@ void check_global_decl(node_t node){
 				|| (node->opr[1]->nature == NODE_MINUS) 
 				|| (node->opr[1]->nature == NODE_DIV) 
 				|| (node->opr[1]->nature == NODE_MUL)){
-				errno = EINVAL;
-				printf("ERROR on line %d \n", node->opr[0]->lineno);
-				perror("Can't affect a global variable with an expression");
+				printf("Error line %d: global variables can only be initialized with a constant value\n", node->opr[0]->lineno);
 				exit(EXIT_FAILURE);
 			}
 		}
 	}
 }
 
+
+void check_intval_domain(node_t node){
+	if(node->value > 0xffffffff7fffffff){
+		printf("Error line %d: integer out of range\n", node->lineno);
+		exit(EXIT_FAILURE);
+	}
+}
 
 
 /* --------------- Tree parsing --------------- */
@@ -172,19 +200,27 @@ void analyse_passe_1(node_t root) {
 		isGlobal=1; //flag to update the global_decl attribute
 	}	
 
-	// parsing the tree
+	// parsing the tree}
 	for(int i = 0; i < root->nops; i++){
 		if(root->opr[i] != NULL){
 			//printf("Nature node : %d\n", root->opr[i]->nature);
+			//printf("type neoud : %d\n", root->type);
 			switch(root->opr[i]->nature){
 				case NODE_TYPE :
 					if (root->opr[i]->type != 0){
 						current_type = root->opr[i]->type;
 					}
 					break;
+				case NODE_INTVAL :
+					printf("allo\n");
+					check_intval_domain(root->opr[i]);
+					break;
 				case NODE_IDENT :
 					// On verifie si la variable a déjà été déclarée
 					variableDecl = (node_t) get_decl_node(root->opr[i]->ident);
+					printf("ident %s\n", root->opr[i]->ident);
+					// printf("Type %d\n", root->opr[i]->type);
+
 
 					// If ident == 'main' => setup the type to void and jump to the next node
 					if (!(strcmp(root->opr[i]->ident, "main"))){
@@ -197,7 +233,6 @@ void analyse_passe_1(node_t root) {
 						//If undeclared, we add it to the environnement
 						root->opr[i]->offset = env_add_element(root->opr[i]->ident, root->opr[i]);
 						root->opr[i]->type = current_type;
-						//current_type = TYPE_NONE;
 					}
 					else {
 						// Else we get the adress of declaration and associate it with the current variable
@@ -205,12 +240,10 @@ void analyse_passe_1(node_t root) {
 							root->opr[i]->offset = variableDecl->offset;
 							root->opr[i]->type = variableDecl->type;
 						}
-						else{
-							errno = EINVAL;
-							printf("ERROR on line %d \n", root->opr[i]->lineno);
-							perror("Undeclared variable");
+						else {
+							printf("Error line %d : undeclared variable '%s'\n", root->opr[i]->lineno, root->opr[i]->ident);
 							exit(EXIT_FAILURE);
-						}
+						}					
 					}
 
 					// Update of the global_decl
@@ -223,6 +256,8 @@ void analyse_passe_1(node_t root) {
 
 					// Update of decl_node
 					root->opr[i]->decl_node = get_decl_node(root->opr[i]->ident);
+
+
 					break;
 
 					
@@ -243,6 +278,27 @@ void analyse_passe_1(node_t root) {
 					root->opr[i]->type = TYPE_INT;
 					break;
 				case NODE_MOD :
+					root->opr[i]->type = TYPE_INT;
+					break;
+				case NODE_BNOT :
+					root->opr[i]->type = TYPE_INT;
+					break;
+				case NODE_BAND :
+					root->opr[i]->type = TYPE_INT;
+					break;
+				case NODE_BOR :
+					root->opr[i]->type = TYPE_INT;
+					break;
+				case NODE_BXOR :
+					root->opr[i]->type = TYPE_INT;
+					break;
+				case NODE_SRL :
+					root->opr[i]->type = TYPE_INT;
+					break;
+				case NODE_SRA :
+					root->opr[i]->type = TYPE_INT;
+					break;
+				case NODE_SLL :
 					root->opr[i]->type = TYPE_INT;
 					break;
 
@@ -298,9 +354,14 @@ void analyse_passe_1(node_t root) {
 		if(root->opr[i] != NULL){
 			analyse_passe_1(root->opr[i]);
 		}
+		//printf("type neoud : %d\n", root->type);
 		// get offset of the function
 		if(root->nature == NODE_FUNC){
 			root->offset = get_env_current_offset();
+			if(root->opr[0]->type != TYPE_VOID){
+				printf("Error line %d: 'main()' declaration must have a 'void' return type\n", root->opr[0]->lineno);
+				exit(EXIT_FAILURE);
+			}
 		}
 		// check that operations are between INT
 		if(root->nature == NODE_PLUS){
@@ -319,18 +380,36 @@ void analyse_passe_1(node_t root) {
 			check_mod_type(root);
 		}
 		// check that condition returns boolean 
-		if(root->nature == NODE_IF){
-			check_bool_expr(root);
+		if(	root->nature == NODE_DOWHILE ||
+			root->nature == NODE_FOR){
+			check_bool_expr(root, 1);
+			//the do_while bool expression is the second son
 		}
-		if(root->nature == NODE_WHILE){
-			check_bool_expr(root);
+		if (root->nature == NODE_WHILE ||
+			root->nature == NODE_IF ){
+			check_bool_expr(root, 0);
+			//the if & while bool expression is the first son
 		}
+		// check the coherence of type affectation
 		if(root->nature == NODE_AFFECT){
-			// chek the coherence of type affectation
 			check_affect_type(root);
+		}
+		if(root->nature == NODE_DECLS){
+			if (root->opr[0]->type && root->opr[1]->type){
+				if (root->opr[0]->type != root->opr[1]->type){
+					printf("Error line %d: Variable already declared\n", root->lineno);
+					exit(EXIT_FAILURE);
+				}	
+			}
 		}
 		if(root->nature == NODE_DECL ){
 			// check the global declaration : not an expression and check the coherence of the types
+			// if (root->type == 0){
+			// 	printf("ERREUR\n");
+			// }
+			root->type = root->opr[0]->type;
+			printf("type du node decl : %d\n", root->type);
+			//root->opr[0]->type
 			check_global_decl(root);
 			check_affect_type(root);
 			declaration = 0;
@@ -344,7 +423,7 @@ void analyse_passe_1(node_t root) {
 			root->nature == NODE_LE ||
 			root->nature == NODE_GE ||
 			root->nature == NODE_AND ||
-			root->nature == NODE_OR){
+			root->nature == NODE_OR ){
 			check_bool_op(root);
 		}	
 	}
