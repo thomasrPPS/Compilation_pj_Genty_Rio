@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 #include "defs.h"
 #include "passe_1.h"
@@ -203,8 +202,6 @@ void analyse_passe_1(node_t root) {
 	// parsing the tree}
 	for(int i = 0; i < root->nops; i++){
 		if(root->opr[i] != NULL){
-			//printf("Nature node : %d\n", root->opr[i]->nature);
-			//printf("type neoud : %d\n", root->type);
 			switch(root->opr[i]->nature){
 				case NODE_TYPE :
 					if (root->opr[i]->type != 0){
@@ -212,14 +209,11 @@ void analyse_passe_1(node_t root) {
 					}
 					break;
 				case NODE_INTVAL :
-					printf("allo\n");
 					check_intval_domain(root->opr[i]);
 					break;
 				case NODE_IDENT :
 					// On verifie si la variable a déjà été déclarée
 					variableDecl = (node_t) get_decl_node(root->opr[i]->ident);
-					printf("ident %s\n", root->opr[i]->ident);
-					// printf("Type %d\n", root->opr[i]->type);
 
 
 					// If ident == 'main' => setup the type to void and jump to the next node
@@ -397,19 +391,14 @@ void analyse_passe_1(node_t root) {
 		if(root->nature == NODE_DECLS){
 			if (root->opr[0]->type && root->opr[1]->type){
 				if (root->opr[0]->type != root->opr[1]->type){
-					printf("Error line %d: Variable already declared\n", root->lineno);
+					printf("Error line %d: variable already declared\n", root->lineno);
 					exit(EXIT_FAILURE);
 				}	
 			}
 		}
 		if(root->nature == NODE_DECL ){
 			// check the global declaration : not an expression and check the coherence of the types
-			// if (root->type == 0){
-			// 	printf("ERREUR\n");
-			// }
 			root->type = root->opr[0]->type;
-			printf("type du node decl : %d\n", root->type);
-			//root->opr[0]->type
 			check_global_decl(root);
 			check_affect_type(root);
 			declaration = 0;
