@@ -88,6 +88,12 @@ program:
         $$ = make_node(NODE_PROGRAM, 2, $1, $2);
         *program_root = $$;
         }
+        |
+        listdeclnonnull
+        {
+            $$ = make_node(NODE_PROGRAM, 2, $1, NULL);
+            *program_root = $$;
+        }
         | maindecl
         {
         $$ = make_node(NODE_PROGRAM, 2, NULL, $1);

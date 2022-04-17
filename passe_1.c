@@ -170,10 +170,8 @@ void check_affect_type(node_t node){
 void check_global_decl(node_t node){
 	if (node->opr[1] != NULL){
 		if (node->opr[0]->global_decl){
-			if ((node->opr[1]->nature == NODE_PLUS) 
-				|| (node->opr[1]->nature == NODE_MINUS) 
-				|| (node->opr[1]->nature == NODE_DIV) 
-				|| (node->opr[1]->nature == NODE_MUL)){
+			if ((node->opr[1]->nature != NODE_INTVAL)
+				&& (node->opr[1]->nature != NODE_BOOLVAL)){
 				printf("Error line %d: global variables can only be initialized with a constant value\n", node->opr[0]->lineno);
 				exit(EXIT_FAILURE);
 			}
