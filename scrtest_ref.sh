@@ -1,21 +1,21 @@
 #! /bin/bash
 
-rm log.txt
+rm results_ref.txt
 
 for i in 1 2 3 4 5 6 7 8 
 do  
 	echo -n "S_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
-	./minicc tests/Syntaxe/KO/test$i.c -s &> buffer.txt
+	./minicc_ref tests/Syntaxe/KO/test$i.c -s &> buffer.txt
 	TEMP=$(echo $(cat buffer.txt)  | cut -d ":" -f 1)
-	echo $BUFFER$TEMP >> log.txt
+	echo $BUFFER$TEMP >> results_ref.txt
 done
 
 for i in 1 2 3 4 5
 do 
 	echo -n "S_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
-	./minicc tests/Syntaxe/OK/test$i.c -s &> buffer.txt
+	./minicc_ref tests/Syntaxe/OK/test$i.c -s &> buffer.txt
 	RESULT=$(cat buffer.txt)
 	if [ -z "$RESULT" ]
 	then
@@ -24,16 +24,16 @@ do
 	else
 		RESULT=$(cat buffer.txt)
 	fi
-	echo $BUFFER$RESULT >> log.txt
+	echo $BUFFER$RESULT >> results_ref.txt
 done
 
 for i in 1 2 3 4 5 6 7 8 9 10
 do 
 	echo -n "V_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
-	./minicc tests/Verif/KO/test$i.c  &> buffer.txt
-	TEMP=$(echo $(cat buffer.txt) | cut -d ":" -f 1)
-	echo $BUFFER$TEMP >> log.txt
+	./minicc_ref tests/Verif/KO/test$i.c  &> buffer.txt
+	TEMP=$(echo $(cat buffer.txt)  | cut -d ":" -f 1)
+	echo $BUFFER$TEMP >> results_ref.txt
 done
 
 for i in 1 2 3 4 5
@@ -49,25 +49,25 @@ do
 	else
 		RESULT=$(cat buffer.txt)
 	fi
-	echo $BUFFER$RESULT >> log.txt
+	echo $BUFFER$RESULT >> results_ref.txt
 done
 
 for i in 1 2 3 4 5
 do 
 	echo -n "G_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
-	./minicc tests/Gencode/KO/test$i.c &> buffer.txt
+	./minicc_ref tests/Gencode/KO/test$i.c &> buffer.txt
 	java -jar tools/Mars_4_2.jar  out.s &> buffer.txt
 	head -n 3 buffer.txt | tail -1 > buff.txt
 	TEMP=$(cat buff.txt)
-	echo $BUFFER$TEMP >> log.txt
+	echo $BUFFER$TEMP >> results_ref.txt
 done
 
 for i in 1 2 3 4 5
 do 
 	echo -n "G_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
-	./minicc tests/Gencode/OK/test$i.c -s &> buffer.txt
+	./minicc_ref tests/Gencode/OK/test$i.c -s &> buffer.txt
 	java -jar tools/Mars_4_2.jar  out.s &> buffer.txt
 	head -n 3 buffer.txt | tail -1 > buff.txt
 	RESULT=$(cat buff.txt) 
@@ -78,17 +78,6 @@ do
 	else
 		RESULT=$(cat buff.txt)
 	fi
-	echo $BUFFER$RESULT >> log.txt
+	echo $BUFFER$RESULT >> results_ref.txt
 done
 rm buff.txt
-
-rm buffer.txt
-
-diff -a log.txt  results_ref.txt > buffer.txt
-BUFFER=$(cat buffer.txt) 
-if [ -z "$BUFFER" ]
-then
-	echo -n "Il n'y a pas d'erreur qui ont été trouvées dans le compilateur \n"
-else
-	diff -a log.txt  results_ref.txt
-fi

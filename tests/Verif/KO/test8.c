@@ -1,5 +1,5 @@
 int a = 0, b=0;
-/// === //// if if else d'affiler 
+/// condition dans le while fausse
 void main(){
 	do{
 		b=b-1;

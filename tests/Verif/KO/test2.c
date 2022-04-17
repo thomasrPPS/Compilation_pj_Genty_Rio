@@ -3,8 +3,8 @@ int a,bA=a;
 void main(){
 	if (true){
 		a = 0 + 45 +433 - 2323 /4;
-		//parenthese en trop
-		if (bA > a){ 
+		
+		if (bA > a == x){ 
 			print("xd");
 		}
 	}
