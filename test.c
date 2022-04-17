@@ -1,6 +1,8 @@
 // Un exemple de programme MiniC
 int start = 0;
-int end = 100;
+int end = 2147483648;
+bool x, y = true;
+//bool start;
 
 void main () {
 	int i, s = start , e = end ;
