@@ -2,7 +2,7 @@
 
 rm log.txt
 
-for i in 1 2 3 4 5 6 7 8 
+for i in 1 2 3 4 5 6 7 
 do  
 	echo -n "S_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -11,7 +11,7 @@ do
 	echo $BUFFER$TEMP >> log.txt
 done
 
-for i in 1 2 3 4 5
+for i in 1 2 3 4 5 6 7
 do 
 	echo -n "S_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -27,7 +27,7 @@ do
 	echo $BUFFER$RESULT >> log.txt
 done
 
-for i in 1 2 3 4 5 6 7 8 9 10
+for i in 1 2 3 4 5 6 7 8 9 10 11
 do 
 	echo -n "V_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -36,7 +36,7 @@ do
 	echo $BUFFER$TEMP >> log.txt
 done
 
-for i in 1 2 3 4 5
+for i in 1 2 3 4 5 6 7 8 9 10 11
 do 
 	echo -n "V_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -53,7 +53,7 @@ do
 done
 
 for i in 1 2 3 4 5
-do 
+do  
 	echo -n "G_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
 	./minicc tests/Gencode/KO/test$i.c &> buffer.txt
@@ -63,7 +63,7 @@ do
 	echo $BUFFER$TEMP >> log.txt
 done
 
-for i in 1 2 3 4 5
+for i in 1 2 3 4 5 6
 do 
 	echo -n "G_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -84,6 +84,7 @@ rm buff.txt
 
 rm buffer.txt
 
+echo "Si aucun numéro de test s'affiche c'est qu'il n'y a pas eu d'erreurs .Voir le fichier log.txt pour regarder les sorties des tests sur notre compilateur avec les lignes des erreurs"
 diff -a log.txt  results_ref.txt > buffer.txt
 BUFFER=$(cat buffer.txt) 
 if [ -z "$BUFFER" ]

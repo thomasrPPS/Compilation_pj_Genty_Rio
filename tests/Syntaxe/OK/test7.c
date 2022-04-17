@@ -1,5 +1,5 @@
 int a = false; 
 
 void main(){
-	a = True;
+	a = true;
 }

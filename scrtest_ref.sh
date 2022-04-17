@@ -2,7 +2,7 @@
 
 rm results_ref.txt
 
-for i in 1 2 3 4 5 6 7 8 
+for i in 1 2 3 4 5 6 7 
 do  
 	echo -n "S_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -11,7 +11,7 @@ do
 	echo $BUFFER$TEMP >> results_ref.txt
 done
 
-for i in 1 2 3 4 5
+for i in 1 2 3 4 5 6 7
 do 
 	echo -n "S_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -27,7 +27,7 @@ do
 	echo $BUFFER$RESULT >> results_ref.txt
 done
 
-for i in 1 2 3 4 5 6 7 8 9 10
+for i in 1 2 3 4 5 6 7 8 9 10 11
 do 
 	echo -n "V_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -36,7 +36,7 @@ do
 	echo $BUFFER$TEMP >> results_ref.txt
 done
 
-for i in 1 2 3 4 5
+for i in 1 2 3 4 5 6 7 8 9 10 11
 do 
 	echo -n "V_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -63,7 +63,7 @@ do
 	echo $BUFFER$TEMP >> results_ref.txt
 done
 
-for i in 1 2 3 4 5
+for i in 1 2 3 4 5 6
 do 
 	echo -n "G_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
