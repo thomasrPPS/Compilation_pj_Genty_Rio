@@ -145,7 +145,16 @@ void check_bool_expr(node_t node, int positionnal){
 void check_bool_op(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){
 		if (node->opr[0]->type != node->opr[1]->type){	
-			printf("Error line %d: two arguments must be the same type\n", node->opr[0]->lineno);
+			printf("Error line %d: two arguments must be of type TYPE_BOOL\n", node->opr[0]->lineno);
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+void check_int_op(node_t node){
+	if (node->opr[0]->type && node->opr[1]->type){
+		if (node->opr[0]->type != node->opr[1]->type){	
+			printf("Error line %d: two arguments must be of type TYPE_INT\n", node->opr[0]->lineno);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -412,6 +421,15 @@ void analyse_passe_1(node_t root) {
 			root->nature == NODE_AND ||
 			root->nature == NODE_OR ){
 			check_bool_op(root);
-		}	
+		}
+		if(	root->nature == NODE_BNOT ||
+			root->nature == NODE_BAND ||
+			root->nature == NODE_BOR ||
+			root->nature == NODE_BXOR||
+			root->nature == NODE_SRL||
+			root->nature ==NODE_SRA ||
+			root->nature ==NODE_SLL ){
+				check_int_op(root);
+		}
 	}
 }
