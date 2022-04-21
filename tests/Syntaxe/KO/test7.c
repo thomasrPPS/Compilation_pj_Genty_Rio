@@ -1,5 +1,6 @@
+//arg main
 int a = false; 
 
-void main(){
-	a = True;
+void main(sz){
+	a = TTrue-54;
 }

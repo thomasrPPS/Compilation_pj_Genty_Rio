@@ -4,5 +4,5 @@ int b = 3;
 
 void main(){
 	a = b;
-	print("test validé");
+	print("test valide");
 }

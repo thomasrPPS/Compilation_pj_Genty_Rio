@@ -1,7 +1,7 @@
 //int !=bool
-int a = TR34;
+bool a = true;
 
 void main(){
-	a= 0;
+	a= -a;
 
 }

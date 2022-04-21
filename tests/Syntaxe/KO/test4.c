@@ -1,4 +1,4 @@
-//boucle for
+//boucle for mal ecrite
 void main(){
 	int a = 4,b = 8, c = 7;
 	for (a < b ; a = a + 2){
