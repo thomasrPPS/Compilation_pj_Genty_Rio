@@ -1,5 +1,5 @@
 //int !=bool
-int a = TR34;
+int a = 3;
 
 void main(){
 	a= 0;

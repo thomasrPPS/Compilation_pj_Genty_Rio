@@ -2,7 +2,7 @@
 
 rm log.txt
 
-for i in 1 2 3 4 5 6 7 
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 do  
 	echo -n "S_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -11,7 +11,7 @@ do
 	echo $BUFFER$TEMP >> log.txt
 done
 
-for i in 1 2 3 4 5 6 7
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 do 
 	echo -n "S_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -27,7 +27,7 @@ do
 	echo $BUFFER$RESULT >> log.txt
 done
 
-for i in 1 2 3 4 5 6 7 8 9 10 11
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 do 
 	echo -n "V_KO $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -36,7 +36,7 @@ do
 	echo $BUFFER$TEMP >> log.txt
 done
 
-for i in 1 2 3 4 5 6 7 8 9 10 11
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
 do 
 	echo -n "V_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
@@ -63,21 +63,14 @@ do
 	echo $BUFFER$TEMP >> log.txt
 done
 
-for i in 1 2 3 4 5 6
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 do 
 	echo -n "G_OK $i :" > buffer.txt
 	BUFFER=$(cat buffer.txt) 
-	./minicc tests/Gencode/OK/test$i.c -s &> buffer.txt
+	./minicc tests/Gencode/OK/test$i.c &> buffer.txt
 	java -jar tools/Mars_4_2.jar  out.s &> buffer.txt
 	head -n 3 buffer.txt | tail -1 > buff.txt
 	RESULT=$(cat buff.txt) 
-	if [ -z "$RESULT" ]
-	then
-		echo -n "Test okay" > buff.txt
-		RESULT=$(cat buff.txt) 
-	else
-		RESULT=$(cat buff.txt)
-	fi
 	echo $BUFFER$RESULT >> log.txt
 done
 rm buff.txt

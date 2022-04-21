@@ -1,6 +1,6 @@
-//true mal écris
+//int != bool
 bool a = false; 
 
 void main(){
-	a = True;
+	a = 44E;
 }
