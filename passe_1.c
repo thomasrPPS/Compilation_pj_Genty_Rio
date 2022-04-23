@@ -40,7 +40,6 @@ void check_add_type(node_t node){
 
 void check_minus_type(node_t node){
 	if (node->opr[0]->type && node->opr[1]->type){
-
 		if (node->opr[0]->type != TYPE_INT || node->opr[1]->type != TYPE_INT){	
 			if(node->opr[0]->type != TYPE_INT){
 				printf("Error line %d: operator '-' cannot have left operand of type TYPE BOOL\n", node->opr[0]->lineno);
@@ -143,17 +142,34 @@ void check_bool_expr(node_t node, int positionnal){
 
 // check that boolean pperations are between 2 same types
 void check_bool_op(node_t node){
-	if (node->opr[0]->type && node->opr[1]->type){
-		if (node->opr[0]->type != node->opr[1]->type){	
+	if (node->opr[1] != NULL){
+		if (node->opr[0]->type && node->opr[1]->type){
+			if (node->opr[0]->type != node->opr[1]->type){	
+				printf("Error line %d: two arguments must be of type TYPE_BOOL\n", node->opr[0]->lineno);
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+	else{
+		if (node->opr[0]->type != TYPE_BOOL){	
 			printf("Error line %d: two arguments must be of type TYPE_BOOL\n", node->opr[0]->lineno);
 			exit(EXIT_FAILURE);
 		}
 	}
+
 }
 
 void check_int_op(node_t node){
-	if (node->opr[0]->type && node->opr[1]->type){
-		if (node->opr[0]->type != node->opr[1]->type){	
+	if (node->opr[1] != NULL){
+		if (node->opr[0]->type && node->opr[1]->type){
+			if (node->opr[0]->type != node->opr[1]->type){	
+				printf("Error line %d: two arguments must be of type TYPE_INT\n", node->opr[0]->lineno);
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+	else{
+		if (node->opr[0]->type != TYPE_INT){	
 			printf("Error line %d: two arguments must be of type TYPE_INT\n", node->opr[0]->lineno);
 			exit(EXIT_FAILURE);
 		}
@@ -222,13 +238,11 @@ void analyse_passe_1(node_t root) {
 					// On verifie si la variable a déjà été déclarée
 					variableDecl = (node_t) get_decl_node(root->opr[i]->ident);
 
-
 					// If ident == 'main' => setup the type to void and jump to the next node
 					if (!(strcmp(root->opr[i]->ident, "main"))){
 						root->opr[i]->type = TYPE_VOID;
 						break;
 					}
-
 					// Offset update
 					if (variableDecl == NULL && declaration){
 						//If undeclared, we add it to the environnement
@@ -240,6 +254,9 @@ void analyse_passe_1(node_t root) {
 						if (variableDecl != NULL){
 							root->opr[i]->offset = variableDecl->offset;
 							root->opr[i]->type = variableDecl->type;
+							root->opr[i]->global_decl = variableDecl->global_decl;
+							
+
 						}
 						else {
 							printf("Error line %d : undeclared variable '%s'\n", root->opr[i]->lineno, root->opr[i]->ident);
@@ -248,17 +265,12 @@ void analyse_passe_1(node_t root) {
 					}
 
 					// Update of the global_decl
-					if(isGlobal){
+					if(isGlobal && !root->opr[i]->global_decl){
+
 						root->opr[i]->global_decl = true;
 					}
-					else{
-						root->opr[i]->global_decl = false;
-					}
-
 					// Update of decl_node
 					root->opr[i]->decl_node = get_decl_node(root->opr[i]->ident);
-
-
 					break;
 
 					
