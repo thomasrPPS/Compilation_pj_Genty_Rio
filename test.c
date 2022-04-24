@@ -4,14 +4,8 @@ int end = 5;
 void main () {
 	int i, s = start , e = end ;
 	int sum = 0;
-	sum = start;
-	for (i = s; i < e; i = i + 2) {
+	for (i = s; i < e; i = i + 1) {
  		sum = sum + 1;	
- 		sum = sum +2;
-
- 	}
- 	while(sum < start){
- 		sum = ~start;
  	}
 	print("sum :", sum , "\n") ;
 }
