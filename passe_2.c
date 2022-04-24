@@ -96,6 +96,7 @@ void affect_variable(node_t node){
 	if(node->opr[0]->nature == NODE_IDENT
 	&& node->opr[1]->nature == NODE_IDENT){
 		if(reg_available()){
+			current_reg = get_current_reg();
 			if(node->opr[0]->global_decl){
 				inst_create_lui(current_reg, 0x1001);
 				inst_create_lw(current_reg, node->opr[1]->offset , current_reg);
@@ -145,11 +146,14 @@ void affect_variable(node_t node){
 	if((node->opr[0]->nature == NODE_IDENT 
 	&& node->opr[0]->type == TYPE_BOOL)
 	&& node->opr[1]->nature == NODE_BOOLVAL){
+		current_reg = get_current_reg();
 		if(reg_available()){
 			if(node->opr[0]->global_decl){
 				inst_create_ori(get_current_reg(), 0, node->opr[1]->value);
+				allocate_reg();
 				inst_create_lui(get_current_reg(), 0x1001);
 				inst_create_sw(current_reg, node->opr[0]->offset , get_current_reg());
+				release_reg();
 			}
 			else{
 				// we check if the immediate is on 16 bits 
@@ -189,7 +193,7 @@ void create_lt_instr(node_t node){
 			inst_create_slt(current_reg, current_reg, get_current_reg());
 		}
 		// handling experssion such as addition or substraction
-		else if (node->opr[1]->nature != NODE_INTVAL){
+		else if (node->opr[1]->nature == NODE_INTVAL){
 			switch(node->opr[1]->nature){
 				case NODE_PLUS :
 					create_plus_instr(node->opr[1]);
@@ -353,7 +357,9 @@ void create_le_instr(node_t node){
 					break;
 			}
 			current_reg = get_current_reg()-1;
-			inst_create_slt(current_reg, current_reg, get_current_reg());
+			inst_create_slt(current_reg, get_current_reg(), current_reg);
+			inst_create_xori(current_reg,  current_reg , 1);
+
 		}
 		else if (inLoopFor || inLoopWhile) {
 			if(node->opr[1]->global_decl){
@@ -457,7 +463,8 @@ void create_eq_instr(node_t node){
 					break;
 			}
 			current_reg = get_current_reg()-1;
-			inst_create_slt(current_reg, current_reg, get_current_reg());
+			inst_create_xor(current_reg, current_reg, get_current_reg());
+			inst_create_sltiu(current_reg, 0, 0x1);
 		}
 		else if (inLoopFor || inLoopWhile) {
 			inst_create_lw(get_current_reg(), node->opr[1]->offset , 29);
@@ -555,7 +562,8 @@ void create_neq_instr(node_t node){
 					break;
 			}
 			current_reg = get_current_reg()-1;
-			inst_create_slt(current_reg, current_reg, get_current_reg());
+			inst_create_xor(current_reg, current_reg, get_current_reg());
+			inst_create_sltu(current_reg, 0, current_reg);
 		}
 		else if (inLoopFor || inLoopWhile) {
 			inst_create_lw(get_current_reg(), node->opr[1]->offset , 29);
@@ -656,6 +664,7 @@ void create_gt_instr(node_t node){
 			}
 			current_reg = get_current_reg()-1;
 			inst_create_slt(current_reg, current_reg, get_current_reg());
+			inst_create_xori(current_reg,  current_reg , 1);
 		}
 		else if (inLoopFor || inLoopWhile) {
 			if(node->opr[1]->global_decl){
@@ -760,6 +769,7 @@ void create_ge_instr(node_t node){
 			}
 			current_reg = get_current_reg()-1;
 			inst_create_slt(current_reg, current_reg, get_current_reg());
+			inst_create_xori(current_reg,  current_reg , 1);
 		}
 		else if (inLoopFor || inLoopWhile) {
 			if(node->opr[1]->global_decl){
@@ -830,7 +840,7 @@ void create_plus_instr(node_t node){
 		}
 		else{
 			if (node->opr[1]->value <= 0xffff){
-				inst_create_ori(get_current_reg(), get_current_reg(), node->opr[1]->value);
+				inst_create_ori(get_current_reg(), 0, node->opr[1]->value);
 			}
 			else{
 				printf("Error line %d: immediate must be a 16 bits integer\n", node->opr[1]->lineno);
